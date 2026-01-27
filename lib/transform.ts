@@ -82,7 +82,7 @@ function calculateOutliers(values: number[]): Set<number> {
 }
 
 // Filter out quotes that are statistical outliers within their trade
-function filterOutliers(quotes: Array<{ price: number; aggregator: string; efficiency: number; latency_ms: number }>): Array<{ price: number; aggregator: string; efficiency: number; latency_ms: number }> {
+function filterOutliers(quotes: Array<{ price: number; aggregator: string; efficiency: number; latency_ms: number; expectedAmount: number }>): Array<{ price: number; aggregator: string; efficiency: number; latency_ms: number; expectedAmount: number }> {
   if (quotes.length < 4) return quotes; // Need at least 4 quotes to detect outliers
   
   // Calculate price outliers
