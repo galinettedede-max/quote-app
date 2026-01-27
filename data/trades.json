@@ -1,0 +1,362 @@
+[
+  {
+    "id": "trade-001",
+    "chain": "Ethereum",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 100000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2503.4805760000004
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2504.980864
+      },
+      {
+        "aggregator": "0x",
+        "price": 2504.23072
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 2504.4807680000004
+      }
+    ],
+    "timestamp": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": "trade-002",
+    "chain": "Base",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 50000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.0006000499999999
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.00080007
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.00070006
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.0009000799999999
+      }
+    ],
+    "timestamp": "2024-01-15T11:00:00Z"
+  },
+  {
+    "id": "trade-003",
+    "chain": "Arbitrum",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 250000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2483.72235
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2485.2105
+      },
+      {
+        "aggregator": "0x",
+        "price": 2484.466425
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 2484.962475
+      }
+    ],
+    "timestamp": "2024-01-15T12:00:00Z"
+  },
+  {
+    "id": "trade-004",
+    "chain": "Polygon",
+    "pair": {
+      "tokenIn": "MATIC",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 10000,
+    "tokenIn": "MATIC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 0.8508348900000001
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 0.85125984
+      },
+      {
+        "aggregator": "0x",
+        "price": 0.85100487
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 0.85117485
+      }
+    ],
+    "timestamp": "2024-01-15T13:00:00Z"
+  },
+  {
+    "id": "trade-005",
+    "chain": "Monad",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 500000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2497.64515
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2498.892725
+      },
+      {
+        "aggregator": "0x",
+        "price": 2498.1441800000002
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 2498.393695
+      }
+    ],
+    "timestamp": "2024-01-15T14:00:00Z"
+  },
+  {
+    "id": "trade-006",
+    "chain": "HyperEVM",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 1000000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2512.6093149999997
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2513.86449
+      },
+      {
+        "aggregator": "0x",
+        "price": 2513.111385
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 2513.36242
+      }
+    ],
+    "timestamp": "2024-01-15T15:00:00Z"
+  },
+  {
+    "id": "trade-007",
+    "chain": "Ethereum",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 100000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.0004500200000002
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.00065003
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.0005500250000001
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.000750035
+      }
+    ],
+    "timestamp": "2024-01-15T16:00:00Z"
+  },
+  {
+    "id": "trade-008",
+    "chain": "Base",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 50000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2493.7877150000004
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2495.2820450000004
+      },
+      {
+        "aggregator": "0x",
+        "price": 2494.53488
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 2494.7839350000004
+      }
+    ],
+    "timestamp": "2024-01-15T17:00:00Z"
+  },
+  {
+    "id": "trade-009",
+    "chain": "Arbitrum",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 250000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.00050004
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.00070006
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.0006000499999999
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.00080007
+      }
+    ],
+    "timestamp": "2024-01-15T18:00:00Z"
+  },
+  {
+    "id": "trade-010",
+    "chain": "Polygon",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 10000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.0005500250000001
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.000750035
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.00065003
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.00085004
+      }
+    ],
+    "timestamp": "2024-01-15T19:00:00Z"
+  },
+  {
+    "id": "trade-011",
+    "chain": "Monad",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 500000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.000350015
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.0005500250000001
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.0004500200000002
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.00065003
+      }
+    ],
+    "timestamp": "2024-01-15T20:00:00Z"
+  },
+  {
+    "id": "trade-012",
+    "chain": "HyperEVM",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 1000000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 1.0003400120000001
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 1.00054002
+      },
+      {
+        "aggregator": "0x",
+        "price": 1.000440016
+      },
+      {
+        "aggregator": "Matcha",
+        "price": 1.000640024
+      }
+    ],
+    "timestamp": "2024-01-15T21:00:00Z"
+  }
+]

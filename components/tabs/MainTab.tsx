@@ -1,0 +1,295 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import { TradeData, FilterState, Chain, Pair, TradeSize, Quote } from '@/types';
+import { getTradeData, CHAINS, TRADE_SIZES, TRADE_SIZE_LABELS } from '@/lib/data';
+import FilterPanel from '@/components/filters/FilterPanel';
+import WinRateBarChart from '@/components/charts/WinRateBarChart';
+import MedianVsBestChart from '@/components/charts/MedianVsBestChart';
+import BoxPlot, { priceDistributionToBoxPlot } from '@/components/charts/BoxPlot';
+import LatencyChart from '@/components/charts/LatencyChart';
+import {
+  getBestPrice,
+  getMedianPrice,
+  calculateEfficiency,
+  calculatePriceDifference,
+  didAggregatorWin,
+  calculateAverageLatency,
+  calculateMedianLatency,
+  calculateP95Latency,
+} from '@/lib/utils';
+
+export default function MainTab() {
+  const [tradeData, setTradeData] = useState<TradeData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [filters, setFilters] = useState<FilterState>({
+    chains: CHAINS,
+    pairs: [],
+    sizeRange: { min: TRADE_SIZES[0], max: TRADE_SIZES[TRADE_SIZES.length - 1] },
+    aggregators: [],
+  });
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getTradeData();
+        setTradeData(data);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  // Extract unique pairs and aggregators from data
+  const availablePairs = useMemo(() => {
+    const pairMap = new Map<string, Pair>();
+    tradeData.forEach((trade) => {
+      const key = `${trade.pair.tokenIn}-${trade.pair.tokenOut}`;
+      if (!pairMap.has(key)) {
+        pairMap.set(key, trade.pair);
+      }
+    });
+    return Array.from(pairMap.values());
+  }, [tradeData]);
+
+  const availableAggregators = useMemo(() => {
+    const aggregators = new Set<string>();
+    tradeData.forEach((trade) => {
+      trade.quotes.forEach((quote) => {
+        aggregators.add(quote.aggregator);
+      });
+    });
+    return Array.from(aggregators);
+  }, [tradeData]);
+
+  // Pre-select all pairs and aggregators when data loads
+  useEffect(() => {
+    if (availablePairs.length > 0 && availableAggregators.length > 0) {
+      setFilters((prev) => ({
+        ...prev,
+        pairs: prev.pairs.length === 0 ? availablePairs : prev.pairs,
+        aggregators: prev.aggregators.length === 0 ? availableAggregators : prev.aggregators,
+      }));
+    }
+  }, [availablePairs, availableAggregators]);
+
+  // Apply filters
+  const filteredData = useMemo(() => {
+    return tradeData.filter((trade) => {
+      if (filters.chains.length > 0 && !filters.chains.includes(trade.chain)) {
+        return false;
+      }
+      if (filters.pairs.length > 0) {
+        const pairMatch = filters.pairs.some(
+          (p) =>
+            p.tokenIn === trade.pair.tokenIn &&
+            p.tokenOut === trade.pair.tokenOut
+        );
+        if (!pairMatch) return false;
+      }
+      if (
+        trade.tradeSize < filters.sizeRange.min ||
+        trade.tradeSize > filters.sizeRange.max
+      ) {
+        return false;
+      }
+      if (filters.aggregators.length > 0) {
+        // Check if any quote has a matching aggregator
+        const hasMatchingAggregator = trade.quotes.some((quote) =>
+          filters.aggregators.includes(quote.aggregator)
+        );
+        if (!hasMatchingAggregator) return false;
+      }
+      return true;
+    });
+  }, [tradeData, filters]);
+
+  // Calculate win rate by aggregator (dynamically from quotes)
+  const winRateData = useMemo(() => {
+    const aggregatorMap = new Map<string, { wins: number; total: number }>();
+    
+    filteredData.forEach((trade) => {
+      if (trade.quotes.length === 0) return;
+      
+      const bestPrice = getBestPrice(trade.quotes);
+      const winningAggregators = trade.quotes
+        .filter((q) => q.price === bestPrice)
+        .map((q) => q.aggregator);
+      
+      // Count participation and wins for each aggregator
+      trade.quotes.forEach((quote) => {
+        const current = aggregatorMap.get(quote.aggregator) || { wins: 0, total: 0 };
+        current.total++;
+        if (winningAggregators.includes(quote.aggregator)) {
+          current.wins++;
+        }
+        aggregatorMap.set(quote.aggregator, current);
+      });
+    });
+
+    return Array.from(aggregatorMap.entries()).map(([aggregator, stats]) => ({
+      aggregator,
+      winRate: stats.total > 0 ? (stats.wins / stats.total) * 100 : 0,
+    }));
+  }, [filteredData]);
+
+  // Calculate median vs best (dynamically from quotes)
+  const medianVsBestData = useMemo(() => {
+    const aggregatorMap = new Map<string, { prices: number[]; bestPrices: number[] }>();
+
+    filteredData.forEach((trade) => {
+      if (trade.quotes.length === 0) return;
+      
+      const bestPrice = getBestPrice(trade.quotes);
+      const medianPrice = getMedianPrice(trade.quotes);
+      
+      trade.quotes.forEach((quote) => {
+        const current = aggregatorMap.get(quote.aggregator) || {
+          prices: [],
+          bestPrices: [],
+        };
+        current.prices.push(quote.price);
+        current.bestPrices.push(bestPrice);
+        aggregatorMap.set(quote.aggregator, current);
+      });
+    });
+
+    return Array.from(aggregatorMap.entries()).map(([aggregator, stats]) => {
+      // Calculate median of aggregator prices
+      const sortedPrices = [...stats.prices].sort((a, b) => a - b);
+      const median =
+        sortedPrices.length > 0
+          ? sortedPrices.length % 2 === 0
+            ? (sortedPrices[sortedPrices.length / 2 - 1] + sortedPrices[sortedPrices.length / 2]) / 2
+            : sortedPrices[Math.floor(sortedPrices.length / 2)]
+          : 0;
+      
+      // Calculate median of best prices
+      const sortedBest = [...stats.bestPrices].sort((a, b) => a - b);
+      const best =
+        sortedBest.length > 0
+          ? sortedBest.length % 2 === 0
+            ? (sortedBest[sortedBest.length / 2 - 1] + sortedBest[sortedBest.length / 2]) / 2
+            : sortedBest[Math.floor(sortedBest.length / 2)]
+          : 0;
+
+      return {
+        aggregator,
+        median: best > 0 ? ((median - best) / best) * 100 : 0,
+        best: 0,
+      };
+    });
+  }, [filteredData]);
+
+  // Calculate boxplot data per aggregator (price difference)
+  const boxPlotData = useMemo(() => {
+    const aggregatorMap = new Map<string, number[]>();
+
+    filteredData.forEach((trade) => {
+      if (trade.quotes.length === 0) return;
+      
+      const bestPrice = getBestPrice(trade.quotes);
+      
+      trade.quotes.forEach((quote) => {
+        const current = aggregatorMap.get(quote.aggregator) || [];
+        const priceDiff = calculatePriceDifference(quote.price, bestPrice);
+        current.push(priceDiff);
+        aggregatorMap.set(quote.aggregator, current);
+      });
+    });
+
+    return Array.from(aggregatorMap.entries()).map(([aggregator, prices]) =>
+      priceDistributionToBoxPlot(aggregator, prices)
+    );
+  }, [filteredData]);
+
+  // Calculate efficiency boxplot per trade size (using efficiency from quotes directly)
+  const efficiencyBoxPlotData = useMemo(() => {
+    const sizeMap = new Map<TradeSize, number[]>();
+
+    filteredData.forEach((trade) => {
+      if (trade.quotes.length === 0) return;
+      
+      trade.quotes.forEach((quote) => {
+        const current = sizeMap.get(trade.tradeSize) || [];
+        // Use efficiency directly from quote if available, otherwise calculate
+        const efficiency = quote.efficiency || calculateEfficiency(quote.price, getBestPrice(trade.quotes));
+        current.push(efficiency);
+        sizeMap.set(trade.tradeSize, current);
+      });
+    });
+
+    return Array.from(sizeMap.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([size, efficiencies]) =>
+        priceDistributionToBoxPlot(TRADE_SIZE_LABELS[size] || size.toString(), efficiencies)
+      );
+  }, [filteredData]);
+
+  // Calculate latency statistics by aggregator
+  const latencyData = useMemo(() => {
+    const aggregatorMap = new Map<string, Quote[]>();
+
+    filteredData.forEach((trade) => {
+      trade.quotes.forEach((quote) => {
+        const current = aggregatorMap.get(quote.aggregator) || [];
+        current.push(quote);
+        aggregatorMap.set(quote.aggregator, current);
+      });
+    });
+
+    return Array.from(aggregatorMap.entries()).map(([aggregator, quotes]) => ({
+      aggregator,
+      average: calculateAverageLatency(quotes),
+      median: calculateMedianLatency(quotes),
+      p95: calculateP95Latency(quotes),
+    }));
+  }, [filteredData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-400">Loading data...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <FilterPanel
+        filters={filters}
+        onFiltersChange={setFilters}
+        availablePairs={availablePairs}
+        availableAggregators={availableAggregators}
+      />
+
+      <div className="space-y-6">
+        <WinRateBarChart data={winRateData} />
+        <MedianVsBestChart data={medianVsBestData} />
+        <BoxPlot
+          data={boxPlotData}
+          title="Price Distribution by Aggregator"
+          yAxisLabel="Price Difference (%)"
+        />
+        {efficiencyBoxPlotData.length > 0 && (
+          <BoxPlot
+            data={efficiencyBoxPlotData}
+            title="Efficiency Distribution by Trade Size"
+            yAxisLabel="Efficiency (%)"
+          />
+        )}
+        {latencyData.length > 0 && (
+          <>
+            <LatencyChart data={latencyData} metric="average" />
+            <LatencyChart data={latencyData} metric="median" />
+            <LatencyChart data={latencyData} metric="p95" />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

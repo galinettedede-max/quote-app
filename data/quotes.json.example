@@ -1,0 +1,47 @@
+[
+  {
+    "timestamp": "2026-01-23_09-17-02",
+    "chain": "Mainnet",
+    "chain_name": "Ethereum",
+    "from_token": "ETH",
+    "to_token": "USDC",
+    "usd_amount": 10000,
+    "token_amount": 3.333333333,
+    "project": "1inch_fusion",
+    "expectedAmount": 9799.545966,
+    "efficiency": "99.94%",
+    "latency_ms": 530,
+    "from_amount_usd": 9802.366667,
+    "to_amount_usd": 9796.851091
+  },
+  {
+    "timestamp": "2026-01-23_09-17-02",
+    "chain": "Mainnet",
+    "chain_name": "Ethereum",
+    "from_token": "ETH",
+    "to_token": "USDC",
+    "usd_amount": 10000,
+    "token_amount": 3.333333333,
+    "project": "Velora Delta",
+    "expectedAmount": 9798.362348,
+    "efficiency": "99.93%",
+    "latency_ms": 2970,
+    "from_amount_usd": 9802.366667,
+    "to_amount_usd": 9795.667798
+  },
+  {
+    "timestamp": "2026-01-23_09-17-02",
+    "chain": "Mainnet",
+    "chain_name": "Ethereum",
+    "from_token": "ETH",
+    "to_token": "USDC",
+    "usd_amount": 10000,
+    "token_amount": 3.333333333,
+    "project": "Fly",
+    "expectedAmount": 9797.852274,
+    "efficiency": "99.93%",
+    "latency_ms": 236,
+    "from_amount_usd": 9802.366667,
+    "to_amount_usd": 9795.157865
+  }
+]

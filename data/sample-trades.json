@@ -1,0 +1,42 @@
+[
+  {
+    "id": "trade-001",
+    "chain": "Ethereum",
+    "pair": {
+      "tokenIn": "ETH",
+      "tokenOut": "USDC",
+      "pairType": "Native-Stable"
+    },
+    "tradeSize": 100000,
+    "tokenIn": "ETH",
+    "quotes": [
+      {
+        "aggregator": "1inch",
+        "price": 2503.4805760000004
+      },
+      {
+        "aggregator": "Paraswap",
+        "price": 2504.980864
+      }
+    ],
+    "timestamp": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "trade-002",
+    "chain": "Base",
+    "pair": {
+      "tokenIn": "USDC",
+      "tokenOut": "USDT",
+      "pairType": "Stable-Stable"
+    },
+    "tradeSize": 50000,
+    "tokenIn": "USDC",
+    "quotes": [
+      {
+        "aggregator": "0x",
+        "price": 1.0006000499999999
+      }
+    ],
+    "timestamp": "2024-01-01T00:00:00Z"
+  }
+]
