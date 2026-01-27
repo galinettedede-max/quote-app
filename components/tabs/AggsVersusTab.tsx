@@ -321,6 +321,29 @@ export default function AggsVersusTab() {
     return result;
   }, [filteredData, agg1, agg2]);
 
+  // Get the latest timestamp from the data
+  const latestTimestamp = useMemo(() => {
+    if (tradeData.length === 0) return null;
+    const timestamps = tradeData.map(t => t.timestamp).sort().reverse();
+    return timestamps[0];
+  }, [tradeData]);
+
+  // Format timestamp for display
+  const formatTimestamp = (timestamp: string) => {
+    const [datePart, timePart] = timestamp.split('_');
+    const [year, month, day] = datePart.split('-');
+    const [hour, minute, second] = timePart.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute), parseInt(second));
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -331,6 +354,19 @@ export default function AggsVersusTab() {
 
   return (
     <div>
+      {latestTimestamp && (
+        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-slate-300">Data Run Date:</span>
+              <span className="ml-2 text-sm text-slate-100">{formatTimestamp(latestTimestamp)}</span>
+            </div>
+            <div className="text-xs text-slate-400">
+              {tradeData.length} trades loaded
+            </div>
+          </div>
+        </div>
+      )}
       <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-6 mb-6">
         <h2 className="text-lg font-semibold text-slate-100 mb-4">
           Select Aggregators to Compare

@@ -46,7 +46,9 @@ export default function PairMultiSelect({
       >
         {selectedPairs.length === 0
           ? 'Select pairs...'
-          : `${selectedPairs.length} selected`}
+          : selectedPairs.length === availablePairs.length
+          ? 'All pairs selected'
+          : `${selectedPairs.length} of ${availablePairs.length} selected`}
       </button>
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-slate-700 border border-slate-600 rounded-md shadow-lg max-h-60 overflow-auto">

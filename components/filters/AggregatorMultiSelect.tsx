@@ -35,7 +35,9 @@ export default function AggregatorMultiSelect({
       >
         {selectedAggregators.length === 0
           ? 'Select aggregators...'
-          : `${selectedAggregators.length} selected`}
+          : selectedAggregators.length === availableAggregators.length
+          ? 'All aggregators selected'
+          : `${selectedAggregators.length} of ${availableAggregators.length} selected`}
       </button>
       {isOpen && (
         <div className="absolute z-10 mt-1 w-full bg-slate-700 border border-slate-600 rounded-md shadow-lg max-h-60 overflow-auto">
