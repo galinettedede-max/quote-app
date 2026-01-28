@@ -8,7 +8,6 @@ import WinRateBarChart from '@/components/charts/WinRateBarChart';
 import BoxPlot, { priceDistributionToBoxPlot } from '@/components/charts/BoxPlot';
 import {
   getBestPrice,
-  calculatePriceDifference,
   calculateEfficiency,
   didAggregatorWin,
 } from '@/lib/utils';
@@ -210,83 +209,6 @@ export default function AggsVersusTab() {
     });
   }, [filteredData, agg1, agg2]);
 
-  // Boxplot per chain
-  const boxPlotPerChain = useMemo(() => {
-    if (!agg1 || !agg2) return [];
-    
-    const chains = Array.from(new Set(filteredData.map((t) => t.chain)));
-    const result: any[] = [];
-    
-    chains.forEach((chain) => {
-      const chainTrades = filteredData.filter((t) => t.chain === chain);
-      const agg1Data: number[] = [];
-      const agg2Data: number[] = [];
-      
-      chainTrades.forEach((trade) => {
-        const bestPrice = getBestPrice(trade.quotes);
-        trade.quotes.forEach((quote) => {
-          if (quote.aggregator === agg1) {
-            agg1Data.push(calculatePriceDifference(quote.price, bestPrice));
-          }
-          if (quote.aggregator === agg2) {
-            agg2Data.push(calculatePriceDifference(quote.price, bestPrice));
-          }
-        });
-      });
-
-      if (agg1Data.length > 0) {
-        result.push(priceDistributionToBoxPlot(`${agg1} - ${chain}`, agg1Data));
-      }
-      if (agg2Data.length > 0) {
-        result.push(priceDistributionToBoxPlot(`${agg2} - ${chain}`, agg2Data));
-      }
-    });
-
-    return result;
-  }, [filteredData, agg1, agg2]);
-
-  // Boxplot per pair
-  const boxPlotPerPair = useMemo(() => {
-    if (!agg1 || !agg2) return [];
-    
-    const pairs = Array.from(
-      new Set(
-        filteredData.map(
-          (t) => `${t.pair.tokenIn}-${t.pair.tokenOut}`
-        )
-      )
-    );
-    const result: any[] = [];
-    
-    pairs.forEach((pairKey) => {
-      const pairTrades = filteredData.filter(
-        (t) => `${t.pair.tokenIn}-${t.pair.tokenOut}` === pairKey
-      );
-      const agg1Data: number[] = [];
-      const agg2Data: number[] = [];
-      
-      pairTrades.forEach((trade) => {
-        const bestPrice = getBestPrice(trade.quotes);
-        trade.quotes.forEach((quote) => {
-          if (quote.aggregator === agg1) {
-            agg1Data.push(calculatePriceDifference(quote.price, bestPrice));
-          }
-          if (quote.aggregator === agg2) {
-            agg2Data.push(calculatePriceDifference(quote.price, bestPrice));
-          }
-        });
-      });
-
-      if (agg1Data.length > 0) {
-        result.push(priceDistributionToBoxPlot(`${agg1} - ${pairKey}`, agg1Data));
-      }
-      if (agg2Data.length > 0) {
-        result.push(priceDistributionToBoxPlot(`${agg2} - ${pairKey}`, agg2Data));
-      }
-    });
-
-    return result;
-  }, [filteredData, agg1, agg2]);
 
   // Efficiency boxplot per trade size
   const efficiencyBoxPlotPerSize = useMemo(() => {
@@ -504,22 +426,6 @@ export default function AggsVersusTab() {
                 </table>
               </div>
             </div>
-          )}
-
-          {boxPlotPerChain.length > 0 && (
-            <BoxPlot
-              data={boxPlotPerChain}
-              title="Price Distribution per Chain"
-              yAxisLabel="Price Difference (%)"
-            />
-          )}
-
-          {boxPlotPerPair.length > 0 && (
-            <BoxPlot
-              data={boxPlotPerPair}
-              title="Price Distribution per Pair"
-              yAxisLabel="Price Difference (%)"
-            />
           )}
 
           {efficiencyBoxPlotPerSize.length > 0 && (

@@ -13,7 +13,6 @@ import {
   getBestPrice,
   getMedianPrice,
   calculateEfficiency,
-  calculatePriceDifference,
   calculateAverageLatency,
   calculateMedianLatency,
   calculateP95Latency,
@@ -186,27 +185,6 @@ export default function MainTab() {
     });
   }, [filteredData]);
 
-  // Calculate boxplot data per aggregator (price difference)
-  const boxPlotData = useMemo(() => {
-    const aggregatorMap = new Map<string, number[]>();
-
-    filteredData.forEach((trade) => {
-      if (trade.quotes.length === 0) return;
-      
-      const bestPrice = getBestPrice(trade.quotes);
-      
-      trade.quotes.forEach((quote) => {
-        const current = aggregatorMap.get(quote.aggregator) || [];
-        const priceDiff = calculatePriceDifference(quote.price, bestPrice);
-        current.push(priceDiff);
-        aggregatorMap.set(quote.aggregator, current);
-      });
-    });
-
-    return Array.from(aggregatorMap.entries()).map(([aggregator, prices]) =>
-      priceDistributionToBoxPlot(aggregator, prices)
-    );
-  }, [filteredData]);
 
   // Calculate efficiency boxplot per aggregator (using efficiency from quotes directly)
   const efficiencyBoxPlotData = useMemo(() => {
@@ -306,11 +284,6 @@ export default function MainTab() {
       <div className="space-y-6">
         <WinRateBarChart data={winRateData} />
         <MedianVsBestChart data={medianVsBestData} />
-        <BoxPlot
-          data={boxPlotData}
-          title="Price Distribution by Aggregator"
-          yAxisLabel="Price Difference (%)"
-        />
         {efficiencyBoxPlotData.length > 0 && (
           <BoxPlot
             data={efficiencyBoxPlotData}
