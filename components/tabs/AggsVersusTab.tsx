@@ -9,6 +9,7 @@ import BoxPlot, { priceDistributionToBoxPlot } from '@/components/charts/BoxPlot
 import {
   getBestPrice,
   calculatePriceDifference,
+  calculateEfficiency,
   didAggregatorWin,
 } from '@/lib/utils';
 
@@ -287,26 +288,28 @@ export default function AggsVersusTab() {
     return result;
   }, [filteredData, agg1, agg2]);
 
-  // Boxplot per trade size
-  const boxPlotPerSize = useMemo(() => {
+  // Efficiency boxplot per trade size
+  const efficiencyBoxPlotPerSize = useMemo(() => {
     if (!agg1 || !agg2) return [];
-    
-    const sizes = Array.from(new Set(filteredData.map((t) => t.tradeSize)));
+
+    const sizes = Array.from(new Set(filteredData.map((t) => t.tradeSize))).sort((a, b) => a - b);
     const result: any[] = [];
-    
+
     sizes.forEach((size) => {
       const sizeTrades = filteredData.filter((t) => t.tradeSize === size);
       const agg1Data: number[] = [];
       const agg2Data: number[] = [];
-      
+
       sizeTrades.forEach((trade) => {
         const bestPrice = getBestPrice(trade.quotes);
         trade.quotes.forEach((quote) => {
+          // Use efficiency directly from quote if available, otherwise calculate
+          const efficiency = quote.efficiency || calculateEfficiency(quote.price, bestPrice);
           if (quote.aggregator === agg1) {
-            agg1Data.push(calculatePriceDifference(quote.price, bestPrice));
+            agg1Data.push(efficiency);
           }
           if (quote.aggregator === agg2) {
-            agg2Data.push(calculatePriceDifference(quote.price, bestPrice));
+            agg2Data.push(efficiency);
           }
         });
       });
@@ -519,11 +522,11 @@ export default function AggsVersusTab() {
             />
           )}
 
-          {boxPlotPerSize.length > 0 && (
+          {efficiencyBoxPlotPerSize.length > 0 && (
             <BoxPlot
-              data={boxPlotPerSize}
-              title="Price Distribution per Trade Size"
-              yAxisLabel="Price Difference (%)"
+              data={efficiencyBoxPlotPerSize}
+              title="Efficiency Distribution per Trade Size"
+              yAxisLabel="Efficiency (%)"
             />
           )}
         </div>
