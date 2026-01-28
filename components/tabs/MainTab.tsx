@@ -11,7 +11,6 @@ import LatencyChart from '@/components/charts/LatencyChart';
 import TransactionsTable from '@/components/tables/TransactionsTable';
 import {
   getBestPrice,
-  getMedianPrice,
   calculateEfficiency,
   calculateAverageLatency,
   calculateMedianLatency,
@@ -137,16 +136,15 @@ export default function MainTab() {
     }));
   }, [filteredData]);
 
-  // Calculate median vs best (dynamically from quotes)
+  // Calculate median and p90 vs best (dynamically from quotes)
   const medianVsBestData = useMemo(() => {
     const aggregatorMap = new Map<string, { prices: number[]; bestPrices: number[] }>();
 
     filteredData.forEach((trade) => {
       if (trade.quotes.length === 0) return;
-      
+
       const bestPrice = getBestPrice(trade.quotes);
-      const medianPrice = getMedianPrice(trade.quotes);
-      
+
       trade.quotes.forEach((quote) => {
         const current = aggregatorMap.get(quote.aggregator) || {
           prices: [],
@@ -167,7 +165,11 @@ export default function MainTab() {
             ? (sortedPrices[sortedPrices.length / 2 - 1] + sortedPrices[sortedPrices.length / 2]) / 2
             : sortedPrices[Math.floor(sortedPrices.length / 2)]
           : 0;
-      
+
+      // Calculate P90 (90th percentile) of aggregator prices
+      const p90Index = Math.floor(sortedPrices.length * 0.9);
+      const p90 = sortedPrices.length > 0 ? sortedPrices[p90Index] : 0;
+
       // Calculate median of best prices
       const sortedBest = [...stats.bestPrices].sort((a, b) => a - b);
       const best =
@@ -180,7 +182,7 @@ export default function MainTab() {
       return {
         aggregator,
         median: best > 0 ? ((median - best) / best) * 100 : 0,
-        best: 0,
+        p90: best > 0 ? ((p90 - best) / best) * 100 : 0,
       };
     });
   }, [filteredData]);
