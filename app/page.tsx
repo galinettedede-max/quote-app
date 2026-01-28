@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import MainTab from '@/components/tabs/MainTab';
 import AggsVersusTab from '@/components/tabs/AggsVersusTab';
-import ChainsVersusTab from '@/components/tabs/ChainsVersusTab';
 
-type Tab = 'main' | 'aggs' | 'chains';
+type Tab = 'main' | 'aggs';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('main');
@@ -43,16 +42,6 @@ export default function Home() {
             >
               Aggs versus
             </button>
-            <button
-              onClick={() => setActiveTab('chains')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'chains'
-                  ? 'border-blue-400 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'
-              }`}
-            >
-              Chains versus
-            </button>
           </div>
         </div>
       </nav>
@@ -60,7 +49,6 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'main' && <MainTab />}
         {activeTab === 'aggs' && <AggsVersusTab />}
-        {activeTab === 'chains' && <ChainsVersusTab />}
       </main>
     </div>
   );

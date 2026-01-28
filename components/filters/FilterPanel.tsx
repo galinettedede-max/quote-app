@@ -2,7 +2,7 @@
 
 import { FilterState, Chain, Pair, TradeSize } from '@/types';
 import { CHAINS, TRADE_SIZES, TRADE_SIZE_LABELS } from '@/lib/data';
-import ChainMultiSelect from './ChainMultiSelect';
+import ChainSingleSelect from './ChainSingleSelect';
 import PairMultiSelect from './PairMultiSelect';
 import SizeRangeSelector from './SizeRangeSelector';
 import AggregatorMultiSelect from './AggregatorMultiSelect';
@@ -24,10 +24,10 @@ export default function FilterPanel({
     <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-6 mb-6">
       <h2 className="text-lg font-semibold text-slate-100 mb-4">Filters</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ChainMultiSelect
-          selectedChains={filters.chains}
-          onChainsChange={(chains) =>
-            onFiltersChange({ ...filters, chains })
+        <ChainSingleSelect
+          selectedChain={filters.chain}
+          onChainChange={(chain) =>
+            onFiltersChange({ ...filters, chain })
           }
         />
         <PairMultiSelect

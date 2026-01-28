@@ -51,9 +51,11 @@ export function calculateQuartiles(values: number[]): { min: number; q1: number;
 // Custom SVG-based boxplot
 export default function BoxPlot({ data, title, yAxisLabel = 'Value' }: BoxPlotProps) {
   const chartHeight = 400;
-  const chartWidth = 800;
   const padding = { top: 40, right: 40, bottom: 60, left: 60 };
-  const plotWidth = chartWidth - padding.left - padding.right;
+
+  // Use viewBox for responsive scaling instead of fixed width
+  const viewBoxWidth = 800;
+  const plotWidth = viewBoxWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
   const boxWidth = Math.min(80, plotWidth / data.length - 10);
 
@@ -62,7 +64,7 @@ export default function BoxPlot({ data, title, yAxisLabel = 'Value' }: BoxPlotPr
   const minValue = Math.min(...allValues);
   const maxValue = Math.max(...allValues);
   const range = maxValue - minValue || 1;
-  
+
   const scaleY = (value: number) => {
     return padding.top + plotHeight - ((value - minValue) / range) * plotHeight;
   };
@@ -74,8 +76,8 @@ export default function BoxPlot({ data, title, yAxisLabel = 'Value' }: BoxPlotPr
   return (
     <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-6">
       <h3 className="text-lg font-semibold text-slate-100 mb-4">{title}</h3>
-      <div className="overflow-x-auto">
-        <svg width={chartWidth} height={chartHeight} className="w-full">
+      <div style={{ width: '100%', height: chartHeight }}>
+        <svg width="100%" height="100%" viewBox={`0 0 ${viewBoxWidth} ${chartHeight}`} preserveAspectRatio="xMidYMid meet">
           {/* Y-axis */}
           <line
             x1={padding.left}
@@ -199,6 +201,7 @@ export default function BoxPlot({ data, title, yAxisLabel = 'Value' }: BoxPlotPr
                   y={chartHeight - padding.bottom + 20}
                   textAnchor="middle"
                   className="text-xs fill-slate-300"
+                  style={{ fontSize: '12px' }}
                   transform={`rotate(-45, ${x}, ${chartHeight - padding.bottom + 20})`}
                 >
                   {item.aggregator}

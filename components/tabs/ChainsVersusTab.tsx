@@ -19,7 +19,7 @@ export default function ChainsVersusTab() {
   const [chain2, setChain2] = useState<Chain | ''>('');
 
   const [filters, setFilters] = useState<FilterState>({
-    chains: CHAINS,
+    chain: 'Mainnet', // Default to Mainnet
     pairs: [],
     sizeRange: { min: TRADE_SIZES[0], max: TRADE_SIZES[TRADE_SIZES.length - 1] },
     aggregators: [],
@@ -77,7 +77,8 @@ export default function ChainsVersusTab() {
       if (chain1 && chain2 && trade.chain !== chain1 && trade.chain !== chain2) {
         return false;
       }
-      if (filters.chains.length > 0 && !filters.chains.includes(trade.chain)) {
+      // Filter by single selected chain (when chain1/chain2 are not set)
+      if (!chain1 && !chain2 && trade.chain !== filters.chain) {
         return false;
       }
       if (filters.pairs.length > 0) {

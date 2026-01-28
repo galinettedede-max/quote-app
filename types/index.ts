@@ -69,7 +69,7 @@ export interface AggregatorStats {
 }
 
 export interface FilterState {
-  chains: Chain[];
+  chain: Chain; // Single chain selection
   pairs: Pair[];
   sizeRange: { min: TradeSize; max: TradeSize };
   aggregators: string[];

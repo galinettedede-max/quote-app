@@ -19,7 +19,7 @@ export default function AggsVersusTab() {
   const [agg2, setAgg2] = useState<string>('');
 
   const [filters, setFilters] = useState<FilterState>({
-    chains: CHAINS,
+    chain: 'Mainnet', // Default to Mainnet
     pairs: [],
     sizeRange: { min: TRADE_SIZES[0], max: TRADE_SIZES[TRADE_SIZES.length - 1] },
     aggregators: [],
@@ -80,7 +80,8 @@ export default function AggsVersusTab() {
         const hasAgg2 = trade.quotes.some((q) => q.aggregator === agg2);
         if (!hasAgg1 && !hasAgg2) return false;
       }
-      if (filters.chains.length > 0 && !filters.chains.includes(trade.chain)) {
+      // Filter by single selected chain
+      if (trade.chain !== filters.chain) {
         return false;
       }
       if (filters.pairs.length > 0) {

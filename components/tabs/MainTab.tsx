@@ -8,6 +8,7 @@ import WinRateBarChart from '@/components/charts/WinRateBarChart';
 import MedianVsBestChart from '@/components/charts/MedianVsBestChart';
 import BoxPlot, { priceDistributionToBoxPlot } from '@/components/charts/BoxPlot';
 import LatencyChart from '@/components/charts/LatencyChart';
+import TransactionsTable from '@/components/tables/TransactionsTable';
 import {
   getBestPrice,
   getMedianPrice,
@@ -24,7 +25,7 @@ export default function MainTab() {
   const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState<FilterState>({
-    chains: CHAINS,
+    chain: 'Mainnet', // Default to Mainnet
     pairs: [],
     sizeRange: { min: TRADE_SIZES[0], max: TRADE_SIZES[TRADE_SIZES.length - 1] },
     aggregators: [],
@@ -80,7 +81,8 @@ export default function MainTab() {
   // Apply filters
   const filteredData = useMemo(() => {
     return tradeData.filter((trade) => {
-      if (filters.chains.length > 0 && !filters.chains.includes(trade.chain)) {
+      // Filter by single selected chain
+      if (trade.chain !== filters.chain) {
         return false;
       }
       if (filters.pairs.length > 0) {
@@ -326,6 +328,9 @@ export default function MainTab() {
             <LatencyChart data={latencyData} metric="p95" />
           </>
         )}
+
+        {/* Transactions Table */}
+        <TransactionsTable data={filteredData} />
       </div>
     </div>
   );
