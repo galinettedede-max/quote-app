@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { TradeData, FilterState, Chain, Pair, TradeSize, Quote } from '@/types';
-import { getTradeData, CHAINS, TRADE_SIZES, TRADE_SIZE_LABELS } from '@/lib/data';
+import { TradeData, FilterState, Pair, Quote } from '@/types';
+import { getTradeData, TRADE_SIZES } from '@/lib/data';
 import FilterPanel from '@/components/filters/FilterPanel';
 import WinRateBarChart from '@/components/charts/WinRateBarChart';
 import MedianVsBestChart from '@/components/charts/MedianVsBestChart';
@@ -14,7 +14,6 @@ import {
   getMedianPrice,
   calculateEfficiency,
   calculatePriceDifference,
-  didAggregatorWin,
   calculateAverageLatency,
   calculateMedianLatency,
   calculateP95Latency,
@@ -209,27 +208,25 @@ export default function MainTab() {
     );
   }, [filteredData]);
 
-  // Calculate efficiency boxplot per trade size (using efficiency from quotes directly)
+  // Calculate efficiency boxplot per aggregator (using efficiency from quotes directly)
   const efficiencyBoxPlotData = useMemo(() => {
-    const sizeMap = new Map<TradeSize, number[]>();
+    const aggregatorMap = new Map<string, number[]>();
 
     filteredData.forEach((trade) => {
       if (trade.quotes.length === 0) return;
-      
+
       trade.quotes.forEach((quote) => {
-        const current = sizeMap.get(trade.tradeSize) || [];
+        const current = aggregatorMap.get(quote.aggregator) || [];
         // Use efficiency directly from quote if available, otherwise calculate
         const efficiency = quote.efficiency || calculateEfficiency(quote.price, getBestPrice(trade.quotes));
         current.push(efficiency);
-        sizeMap.set(trade.tradeSize, current);
+        aggregatorMap.set(quote.aggregator, current);
       });
     });
 
-    return Array.from(sizeMap.entries())
-      .sort((a, b) => a[0] - b[0])
-      .map(([size, efficiencies]) =>
-        priceDistributionToBoxPlot(TRADE_SIZE_LABELS[size] || size.toString(), efficiencies)
-      );
+    return Array.from(aggregatorMap.entries()).map(([aggregator, efficiencies]) =>
+      priceDistributionToBoxPlot(aggregator, efficiencies)
+    );
   }, [filteredData]);
 
   // Calculate latency statistics by aggregator
@@ -317,7 +314,7 @@ export default function MainTab() {
         {efficiencyBoxPlotData.length > 0 && (
           <BoxPlot
             data={efficiencyBoxPlotData}
-            title="Efficiency Distribution by Trade Size"
+            title="Efficiency Distribution by Aggregator"
             yAxisLabel="Efficiency (%)"
           />
         )}
