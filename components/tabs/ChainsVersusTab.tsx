@@ -19,7 +19,7 @@ export default function ChainsVersusTab() {
   const [chain2, setChain2] = useState<Chain | ''>('');
 
   const [filters, setFilters] = useState<FilterState>({
-    chain: 'Mainnet', // Default to Mainnet
+    chain: 'Ethereum', // Default to Ethereum
     pairs: [],
     sizeRange: { min: TRADE_SIZES[0], max: TRADE_SIZES[TRADE_SIZES.length - 1] },
     aggregators: [],

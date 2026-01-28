@@ -1,4 +1,4 @@
-export type Chain = 'Monad' | 'HyperEVM' | 'Base' | 'Arbitrum' | 'Ethereum' | 'Polygon' | 'Mainnet';
+export type Chain = 'Monad' | 'HyperEVM' | 'Base' | 'Arbitrum' | 'Ethereum' | 'Polygon';
 
 export type TradeSize = 10000 | 50000 | 100000 | 250000 | 500000 | 1000000;
 

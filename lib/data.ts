@@ -16,7 +16,7 @@ export async function getTradeData(): Promise<TradeData[]> {
   }
 }
 
-export const CHAINS: Chain[] = ['Monad', 'HyperEVM', 'Base', 'Arbitrum', 'Ethereum', 'Polygon', 'Mainnet'];
+export const CHAINS: Chain[] = ['Monad', 'HyperEVM', 'Base', 'Arbitrum', 'Ethereum', 'Polygon'];
 
 export const TRADE_SIZES: TradeSize[] = [10000, 50000, 100000, 250000, 500000, 1000000];
 
